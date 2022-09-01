@@ -2,25 +2,34 @@ const form = document.querySelector('.feedback-form');
 import * as throttle from 'lodash.throttle';
 
 form.addEventListener(
-  'submit',
+  'input',
   throttle(event => {
     event.preventDefault();
-    const {
-      elements: { email, message },
-    } = event.currentTarget;
-    const userFeedbackDetails = {
-      email: email.value,
-      message: message.value,
-    };
-
-    localStorage.setItem(
-      'feedback-form-state',
-      JSON.stringify(userFeedbackDetails)
-    );
-    console.log(userFeedbackDetails);
-    form.reset();
+    try {
+      const {
+        elements: { email, message },
+      } = event.currentTarget;
+      const inpuUserFeedbackDetails = {
+        email: email.value,
+        message: message.value,
+      };
+      localStorage.setItem(
+        'feedback-form-state',
+        JSON.stringify(inpuUserFeedbackDetails)
+      );
+    } catch (error) {}
   }, 500)
 );
+
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  if (localStorage.getItem('feedback-form-state') !== null) {
+    console.log(localStorage.getItem('feedback-form-state'));
+  }
+
+  localStorage.removeItem('feedback-form-state');
+  form.reset();
+});
 
 const userFeedbackDetailsJSON = localStorage.getItem('feedback-form-state');
 const userFeedbackDetails = JSON.parse(userFeedbackDetailsJSON);
