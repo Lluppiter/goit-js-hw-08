@@ -4,7 +4,8 @@ import * as throttle from 'lodash.throttle';
 const feedbackLsKey = 'feedback-form-state';
 const input = document.querySelector('input');
 const textarea = document.querySelector('textarea');
-const feedbackDetails = {};
+const feedbackDetails = JSON.parse(localStorage.getItem(feedbackLsKey)) || {};
+
 function addInputData() {
   feedbackDetails.email = input.value;
   feedbackDetails.message = textarea.value;
@@ -14,21 +15,17 @@ form.addEventListener('input', throttle(addInputData, 500));
 
 form.addEventListener('submit', event => {
   event.preventDefault();
-  if (
-    feedbackDetails.hasOwnProperty('email') &&
-    feedbackDetails.hasOwnProperty('message')
-  ) {
+  if (Object.keys(feedbackDetails).length > 0) {
     console.log(feedbackDetails);
   }
   localStorage.removeItem(feedbackLsKey);
   form.reset();
 });
 
-const userFeedbackDetailsJSON = localStorage.getItem(feedbackLsKey);
-const userFeedbackDetails = JSON.parse(userFeedbackDetailsJSON);
-try {
-  form.email.value = userFeedbackDetails.email;
-  form.message.value = userFeedbackDetails.message;
-} catch (error) {
-  console.log('form not completed');
+function addLsDatainInput() {
+  if (localStorage.getItem(feedbackLsKey)) {
+    input.value = feedbackDetails.email;
+    textarea.value = feedbackDetails.message;
+  }
 }
+addLsDatainInput();
